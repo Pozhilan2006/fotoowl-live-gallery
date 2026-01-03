@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchArticles } from '../api/articles.api'
 import GalleryGrid from '../components/Gallery/GalleryGrid'
 import GallerySkeleton from '../components/Gallery/GallerySkeleton'
+import ImageModal from '../components/Gallery/ImageModel'
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -12,74 +13,41 @@ export default function Home() {
     queryFn: () => fetchArticles({ page: 1, limit: 9 }),
   })
 
-  useEffect(() => {
-    if (!selectedImage) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    const onKey = (e) => {
-      if (e.key === 'Escape') setSelectedImage(null)
-    }
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
-    }
-  }, [selectedImage])
-
   const openImage = (img) => setSelectedImage(img)
   const closeImage = () => setSelectedImage(null)
 
   if (isLoading) return <GallerySkeleton />
-  if (isError) return <p className="text-red-400">Failed to load images</p>
+
+  if (isError) {
+    return (
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="text-center py-20">
+          <p className="text-red-400 text-sm">Unable to load gallery</p>
+        </div>
+      </div>
+    )
+  }
 
   const items = Array.isArray(data) ? data : data?.data ?? []
 
   return (
-    <section>
-      <h2 className="text-xl mb-4">Latest</h2>
-
-      <GalleryGrid articles={items} onItemClick={openImage} />
-
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={closeImage}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="image-title"
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white text-gray-900 rounded-lg max-w-3xl w-full overflow-hidden shadow-lg"
-          >
-            <div className="flex items-start justify-between p-3 border-b">
-              <h3 id="image-title" className="text-lg font-medium">
-                {selectedImage.title || 'Image'}
-              </h3>
-              <button
-                type="button"
-                onClick={closeImage}
-                aria-label="Close"
-                className="ml-4 rounded px-2 py-1 text-gray-600 hover:text-gray-800 focus:outline-none"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="px-4 py-6 flex justify-center">
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.alt ?? selectedImage.title ?? ''}
-                className="max-w-full max-h-[70vh] object-contain"
-              />
-            </div>
-
-            {selectedImage.description && (
-              <div className="px-4 pb-4 text-sm text-gray-600">{selectedImage.description}</div>
-            )}
-          </div>
+    <>
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white tracking-tight">Gallery</h1>
+          <p className="text-gray-400 text-sm mt-2">Latest uploads</p>
         </div>
-      )}
-    </section>
+
+        {items.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-sm">No images yet</p>
+          </div>
+        ) : (
+          <GalleryGrid articles={items} onItemClick={openImage} />
+        )}
+      </div>
+
+      <ImageModal image={selectedImage} onClose={closeImage} />
+    </>
   )
 }

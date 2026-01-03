@@ -2,12 +2,16 @@ import React from 'react'
 
 export default function Navbar() {
   return (
-    <header className="w-full py-4 bg-transparent">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <div className="text-xl font-bold">FotoOwl</div>
-        <nav>
-          <a className="mr-4 text-sm opacity-80">Home</a>
-          <a className="text-sm opacity-80">About</a>
+    <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-40">
+      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="text-lg font-semibold tracking-tight text-white">FotoOwl</div>
+        <nav className="flex items-center gap-6">
+          <a href="#" className="text-sm text-gray-400 hover:text-gray-200 transition-colors">
+            Gallery
+          </a>
+          <a href="#" className="text-sm text-gray-400 hover:text-gray-200 transition-colors">
+            About
+          </a>
         </nav>
       </div>
     </header>
