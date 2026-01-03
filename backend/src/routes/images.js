@@ -1,14 +1,16 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express'
 
-// GET /images - placeholder list
+const router = express.Router()
+
 router.get('/', (req, res) => {
-  res.json({
-    images: [
-      { id: 1, filename: 'example1.jpg', url: '/uploads/example1.jpg' },
-      { id: 2, filename: 'example2.jpg', url: '/uploads/example2.jpg' }
-    ]
-  });
-});
+  res.json([
+    {
+      id: 1,
+      title: 'Sample Image',
+      url: 'https://picsum.photos/600/400',
+      createdAt: new Date(),
+    },
+  ])
+})
 
-module.exports = router;
+export default router
